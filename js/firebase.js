@@ -33,44 +33,49 @@ function register() {
     var phone = document.getElementById("phone").value;
     var gender = document.getElementById("gender").value;
 
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(function() {
+        firebase.auth().createUserWithEmailAndPassword(email, password).then(function () {
 
-    firebase.auth().createUserWithEmailAndPassword(email, password).then(function () {
+            user = firebase.auth().currentUser;
+            if (user) {
+                // User is signed in.
+                var userId = user.uid;
+                database.ref('users/' + userId).update({
+                    name: name,
+                    email: email,
+                    college: college,
+                    phone: phone,
+                    gender: gender
+                }).then(function () {
+                    // write what happens after registration is compete
+                    alert("registration succesfull")
+                    window.location = "index2.html"
 
-        user = firebase.auth().currentUser;
-        if (user) {
-            // User is signed in.
-            var userId = user.uid;
-            database.ref('users/' + userId).update({
-                name: name,
-                email: email,
-                college: college,
-                phone: phone,
-                gender: gender
-            }).then(function () {
-                // write what happens after registration is compete
-                alert("registration succesfull")
 
-
-            });
-        }
-    }).catch(function (error) {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        console.log(errorCode);
-        alert("registration failed try again")
+                });
+            }
+        }).catch(function (error) {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log(errorCode);
+            alert("registration failed try again")
+        });
     });
 }
 
 function login() {
     var email = document.getElementById("emailin").value;
     var password = document.getElementById("passwordin").value;
-    firebase.auth().signInWithEmailAndPassword(email, password).catch(function (error) {
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(function() {
+        firebase.auth().signInWithEmailAndPassword(email, password).then(function () {
+            window.location = "index2.html"
+        }).catch(function (error) {
 
-        var errorCode = error.code;
-        var errorMessage = error.message;
+            var errorCode = error.code;
+            var errorMessage = error.message;
 
+        });
     });
-
 }
 
 function forget() {
