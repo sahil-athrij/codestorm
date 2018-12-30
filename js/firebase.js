@@ -25,56 +25,78 @@ function SwapDivsWithClick(div1, div2) {
 }
 
 
-function register() {
+function createuser(){
+
     var email = document.getElementById("email").value;
     var password = document.getElementById("password").value;
     var name = document.getElementById("name").value;
     var college = document.getElementById("college").value;
     var phone = document.getElementById("phone").value;
     var gender = document.getElementById("gender").value;
+    firebase.auth().createUserWithEmailAndPassword(email, password).then(function () {
 
-    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(function() {
-        firebase.auth().createUserWithEmailAndPassword(email, password).then(function () {
-
-            user = firebase.auth().currentUser;
-            if (user) {
-                // User is signed in.
-                var userId = user.uid;
-                database.ref('users/' + userId).update({
-                    name: name,
-                    email: email,
-                    college: college,
-                    phone: phone,
-                    gender: gender
-                }).then(function () {
-                    // write what happens after registration is compete
-                    alert("registration succesfull")
-                    window.location = "index2.html"
+        user = firebase.auth().currentUser;
+        if (user) {
+            // User is signed in.
+            var userId = user.uid;
+            database.ref('users/' + userId).update({
+                name: name,
+                email: email,
+                college: college,
+                phone: phone,
+                gender: gender
+            }).then(function () {
+                // write what happens after registration is compete
+                alert("registration succesfull")
+                window.location = "index2.html"
 
 
-                });
-            }
-        }).catch(function (error) {
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            console.log(errorCode);
-            alert("registration failed try again")
-        });
+            });
+        }
+    }).catch(function (error) {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(errorCode);
+        alert("registration failed try again")
     });
 }
 
-function login() {
+function register() {
+
+
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(function() {
+        createuser()
+    }).catch(function (error) {
+        if(error) {
+            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION).then(function () {
+                createuser();
+            });
+        }
+    });
+}
+function loguser() {
     var email = document.getElementById("emailin").value;
     var password = document.getElementById("passwordin").value;
+    firebase.auth().signInWithEmailAndPassword(email, password).then(function () {
+        window.location = "index2.html"
+    }).catch(function (error) {
+
+        var errorCode = error.code;
+        var errorMessage = error.message;
+
+    });
+
+}
+function login() {
+
     firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(function() {
-        firebase.auth().signInWithEmailAndPassword(email, password).then(function () {
-            window.location = "index2.html"
-        }).catch(function (error) {
-
-            var errorCode = error.code;
-            var errorMessage = error.message;
-
-        });
+        loguser()
+    }).catch(function (error){
+        if(error) {
+            firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION).then(function () {
+                loguser()
+            })
+        }
     });
 }
 
