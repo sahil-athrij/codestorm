@@ -48,7 +48,7 @@ function createuser(){
             }).then(function () {
                 // write what happens after registration is compete
                 alert("registration succesfull")
-                window.location = "index2.html"
+                SwapDivsWithClick('signup', 'photoupload')
 
 
             });

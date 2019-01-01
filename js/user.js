@@ -20,7 +20,7 @@ firebase.auth().onAuthStateChanged(user => {
 
   var table = document.querySelector('#usertable tbody');
   var events = firebase.database().ref().child('users/' + uid +'/events');
-  events.once('value', snap => {
+  events.on('value', snap => {
     while(table.hasChildNodes()) {
         table.removeChild(table.firstChild);
     }
